@@ -12,7 +12,6 @@ PG_USER = os.getenv("PG_USER")
 PG_PASSWORD = os.getenv("PG_PASSWORD")
 PG_DBNAME = os.getenv("PG_DBNAME")
 
-
 def get_db_conn() -> connection:
     return psycopg2.connect(
         host=PG_HOST,
