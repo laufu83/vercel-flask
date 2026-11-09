@@ -80,7 +80,7 @@ def vod_search():
 @app.route("/api/vod/categories", methods=["GET"])
 def categories():
     try:
-        rows = with_db(VodService.get_categories)
+        rows = with_db(lambda cur,conn: VodService.get_categories(cur))
         return successResponse(rows)
     except Exception as e:
         print("categories error", e)
@@ -90,7 +90,7 @@ def categories():
 @app.route("/api/vod/categories/tree", methods=["GET"])
 def categories_tree():
     try:
-        tree = with_db(VodService.build_category_tree)
+        tree = with_db(lambda cur,conn: VodService.build_category_tree(cur))
         return successResponse(tree)
     except Exception as e:
         print("tree error", e)
@@ -100,7 +100,7 @@ def categories_tree():
 @app.route("/api/vod/categories/parent", methods=["GET"])
 def categories_parent():
     try:
-        rows = with_db(VodService.get_parent_categories)
+        rows = with_db(lambda cur,conn: VodService.get_parent_categories(cur))
         return successResponse(rows)
     except Exception as e:
         print("parent cat error", e)
@@ -151,7 +151,7 @@ def vod_relate():
 @app.route("/api/vod/stats", methods=["GET"])
 def vod_stats():
     try:
-        row = with_db(VodService.get_stats)
+        row = with_db(lambda cur,conn: VodService.get_stats(cur))
         return successResponse(row)
     except Exception as e:
         print("stats error", e)
@@ -161,7 +161,7 @@ def vod_stats():
 @app.route("/api/vod/years", methods=["GET"])
 def vod_years():
     try:
-        rows = with_db(VodService.get_years)
+        rows = with_db(lambda cur,conn: VodService.get_years(cur))
         return successResponse(rows)
     except Exception as e:
         print("years error", e)
@@ -171,7 +171,7 @@ def vod_years():
 @app.route("/api/vod/areas", methods=["GET"])
 def vod_areas():
     try:
-        rows = with_db(VodService.get_areas)
+        rows = with_db(lambda cur,conn: VodService.get_areas(cur))
         return successResponse(rows)
     except Exception as e:
         print("areas error", e)
