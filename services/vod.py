@@ -23,10 +23,10 @@ class VodService:
         where_parts = []
         args = []
         if pid:
-            where_parts.append("type_id = %s")
+            where_parts.append("type_id_1 = %s")
             args.append(pid)
         if typ:
-            where_parts.append("type_id_1 = %s")
+            where_parts.append("type_id = %s")
             args.append(typ)
         if year:
             where_parts.append("vod_year = %s")
