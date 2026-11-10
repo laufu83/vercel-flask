@@ -2,14 +2,14 @@ import threading
 from fastapi import APIRouter
 from services.sync_service import SyncService
 from utils.res import successResponse
-from config import API_BASE_URL, MAX_THREAD
+from config import API_BASE_URL, MAX_LOOP_PAGE
 
 sync_router = APIRouter(prefix="/api/sync")
 # 全局单例，给路由调用
 sync_service = SyncService(
     api_base_url=API_BASE_URL,
     table_name="vod",
-    max_thread=MAX_THREAD
+    max_page=MAX_LOOP_PAGE
 )
 
 

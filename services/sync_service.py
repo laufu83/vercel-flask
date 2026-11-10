@@ -1,7 +1,5 @@
 import time
-from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
-
 import requests
 from pypinyin import lazy_pinyin, Style
 from requests.adapters import HTTPAdapter
@@ -21,15 +19,14 @@ class SyncService:
         "vod_name_letter"
     ]
 
-    def __init__(self, api_base_url: str, table_name: str, max_thread: int):
+    def __init__(self, api_base_url: str, table_name: str,max_page:int):
         self.API_BASE_URL = api_base_url
         self.TABLE_NAME = table_name
-        self.MAX_THREAD = max_thread
-
         self.progress_lock = Lock()
         self.is_running = False
         self.completed = 0
         self.total_pages = 1
+        self.MAX_LOOP_PAGE = max_page  # 最多跑10页
 
     @staticmethod
     def get_chinese_first_letter(text: str) -> str:
@@ -100,15 +97,15 @@ class SyncService:
 
         with_db(_insert)
 
-
     def get_detail_by_page(self, page: int) -> list[dict]:
         try:
             resp = self.get_session().get(f"{self.API_BASE_URL}?pg={page}&ac=detail&h=24", timeout=15)
-            if (page == 1):
-                self.total_pages = int(resp.json().get("pagecount", 1))
-            return resp.json().get("list", [])
+            json_data = resp.json()
+            if page == 1:
+                self.total_pages = int(json_data.get("pagecount", 1))
+            return json_data.get("list", [])
         except Exception as e:
-            print(f"page {page} get ids error:", e)
+            print(f"page {page} fetch error:", e)
             return []
 
     def task(self, page: int):
@@ -116,25 +113,40 @@ class SyncService:
             time.sleep(1.3)
             details = self.get_detail_by_page(page)
             self.save_single_page(details)
-        finally:
             with self.progress_lock:
                 self.completed += 1
-                print(f"📊 进度：{self.completed}/{self.total_pages} | 第 {page} 页 ✅")
+            print(f"📊 进度：{self.completed}/{self.total_pages} | 第 {page} 页 ✅")
+        except Exception as e:
+            print(f"❌ 第 {page} 页异常: {e}")
+
     def sync_start(self):
-        """执行一步：只处理 current_page，处理完+1，到末尾自动停止"""
+        """串行同步，最多跑 MAX_LOOP_PAGE(10) 页，支持中途停止"""
         with self.progress_lock:
             if self.is_running:
-                return
+                return False
             self.is_running = True
             self.total_pages = 1
             self.completed = 0
-        print(f"🚀 开始同步")
-        for page in range(1, 10 + 1):
-            if (page <= self.total_pages and self.is_running):
-                self.task(page)
+
+        print(f"🚀 开始同步，最多限制 {self.MAX_LOOP_PAGE} 页")
+
+        for page in range(1, self.MAX_LOOP_PAGE + 1):
+            # 每轮先检查停止标记
+            with self.progress_lock:
+                if not self.is_running:
+                    print("🛑 收到停止标记，终止同步")
+                    break
+                # 超过源总页数直接退出
+                if page > self.total_pages:
+                    print(f"📄 源总共只有 {self.total_pages} 页，提前结束")
+                    break
+
+            self.task(page)
+
         print("\n🎉 同步完成！")
         with self.progress_lock:
             self.is_running = False
+        return True
 
     def get_sync_status(self) -> dict:
         with self.progress_lock:
