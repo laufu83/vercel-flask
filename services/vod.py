@@ -52,7 +52,7 @@ class VodService:
         list_sql = f"""
             SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                    vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                   vod_remarks,vod_score,vod_content
+                   vod_remarks,vod_score,vod_content,vod_play_url
             FROM vod
             {where_sql}
             ORDER BY {sort} {order}
@@ -73,7 +73,7 @@ class VodService:
         sql = """
             SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                    vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                   vod_remarks,vod_score,vod_content
+                   vod_remarks,vod_score,vod_content,vod_play_url
             FROM vod WHERE vod_id = %s
         """
         cur.execute(sql, [vid])
@@ -116,7 +116,7 @@ class VodService:
         list_sql = f"""
             SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                    vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                   vod_remarks,vod_score,vod_content
+                   vod_remarks,vod_score,vod_content,vod_play_url
             FROM vod
             {where_sql}
             ORDER BY vod_time DESC
@@ -188,7 +188,7 @@ class VodService:
         sql = """
                 SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                        vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                       vod_remarks,vod_score,vod_content
+                       vod_remarks,vod_score,vod_content,vod_play_url
                 FROM vod
                 WHERE type_id_1=1
                   AND vod_score ~ '^[0-9.]+$'
@@ -205,7 +205,7 @@ class VodService:
         sql = """
                 SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                        vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                       vod_remarks,vod_score,vod_content
+                       vod_remarks,vod_score,vod_content,vod_play_url
                 FROM vod
                 WHERE type_id = %s AND vod_id != %s
                 ORDER BY vod_time DESC
@@ -263,7 +263,7 @@ class VodService:
         sql = f"""
                 SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                        vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                       vod_remarks,vod_score,vod_content
+                       vod_remarks,vod_score,vod_content,vod_play_url
                 FROM vod
                 WHERE vod_id IN ({placeholders})
             """
