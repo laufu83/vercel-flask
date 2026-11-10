@@ -18,7 +18,7 @@ async def sync_start():
     st = sync_service.get_sync_status()
     if st["is_running"]:
         return successResponse(data=None, msg="同步任务正在运行中")
-    t = threading.Thread(target=sync_service.sync_runner, daemon=True)
+    t = threading.Thread(target=sync_service.sync_start, daemon=True)
     t.start()
     return successResponse(data=None, msg="同步任务已启动")
 
