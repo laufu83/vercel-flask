@@ -52,7 +52,7 @@ class VodService:
         list_sql = f"""
             SELECT vod_id,type_id,type_name,vod_name,vod_sub,vod_class,vod_pic,
                    vod_actor,vod_director,vod_time,vod_area,vod_lang,vod_year,
-                   vod_remarks,vod_score,vod_content,vod_play_url
+                   vod_remarks,vod_score,vod_content
             FROM vod
             {where_sql}
             ORDER BY {sort} {order}

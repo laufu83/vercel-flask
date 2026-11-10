@@ -44,9 +44,9 @@ def serialize_datetime(obj: Any) -> Any:
     return obj
 
 
-def successResponse(data: Any) -> JSONResponse:
+def successResponse(data: Any, msg: str = "ok") -> JSONResponse:
     return JSONResponse(
-        content=serialize_datetime({"code": 0, "msg": "ok", "data": data})
+        content=serialize_datetime({"code": 0, "msg": msg, "data": data})
     )
 
 
